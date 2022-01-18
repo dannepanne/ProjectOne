@@ -13,17 +13,52 @@ namespace ProjectOne.Controllers
     public class ProjectTasksController : Controller
     {
         private readonly ProjectDBexaContext _context;
+       
 
         public ProjectTasksController(ProjectDBexaContext context)
         {
             _context = context;
+            
+            
         }
 
         // GET: ProjectTasks
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            var projectDBexaContext = _context.ProjectTasks.Include(p => p.Project).Include(p => p.Resource);
-            return View(await projectDBexaContext.ToListAsync());
+            ViewData["DescriptionSort"] = String.IsNullOrEmpty(sortOrder) ? "desc_sort" : "";
+            ViewData["StatusSort"] = sortOrder == "Status" ? "status_desc" : "Status";
+            ViewData["ProjectSort"] = sortOrder == "Project" ? "project_desc" : "Project";
+            ViewData["ResourceSort"] = sortOrder == "Resource" ? "resource_desc" : "Resource";
+            var projecttasks = (from s in _context.ProjectTasks select s).Include(p => p.Project).Include(p => p.Resource).ToList();
+            switch (sortOrder)
+            {
+                case "desc_sort":
+                    projecttasks = projecttasks.OrderByDescending(s => s.Description).ToList();
+                    break;
+                case "Status":
+                    projecttasks = projecttasks.OrderBy(s => s.Status).ToList();
+                    break;
+                case "status_desc":
+                    projecttasks = projecttasks.OrderByDescending(s => s.Status).ToList();
+                    break;
+                case "Project":
+                    projecttasks = projecttasks.OrderBy(s => s.Projectid).ToList();
+                    break;
+                case "project_desc":
+                    projecttasks = projecttasks.OrderByDescending(s => s.Projectid).ToList();
+                    break;
+
+                case "Resource":
+                    projecttasks = projecttasks.OrderBy(s => s.Resourceid).ToList();
+                    break;
+                case "resource_desc":
+                    projecttasks = projecttasks.OrderByDescending(s => s.Resourceid).ToList();
+                    break;
+                default:
+                    projecttasks = projecttasks.OrderBy(s => s.Description).ToList();
+                    break;
+            }
+            return View(projecttasks.ToList());
         }
 
         // GET: ProjectTasks/Details/5
@@ -61,6 +96,7 @@ namespace ProjectOne.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Resourceid,Projectid,Description,Status,Id")] ProjectTask projectTask)
         {
+            
             if (ModelState.IsValid)
             {
                 _context.Add(projectTask);
