@@ -42,7 +42,13 @@ namespace ProjectOne.Controllers
                     {
                         return Redirect("~/Projects/Index");
                     }
-                        return Redirect("~/ProjectTasks/Index");
+                    
+                    return Redirect("~/ProjectTasks/Index");
+                }
+                else
+                {
+                    ViewBag.error = "Invalid Username/Password";
+                    return View("Index");
                 }
 
             }
@@ -93,5 +99,13 @@ namespace ProjectOne.Controllers
             List<ProjectTask> taskslist = _context.ProjectTasks.ToList();
             return taskslist;
         }
+
+        public Resource GetResourceById(long id)
+        {
+            List<Resource> relist = GetResources();
+            var res = relist.Find(p => p.Id == id);                      /*(from r in relist where r.Id == id select r)*/
+            return res;
+        }
+
     }
 }
