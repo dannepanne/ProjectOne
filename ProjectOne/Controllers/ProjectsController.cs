@@ -13,18 +13,42 @@ namespace ProjectOne.Controllers
     public class ProjectsController : Controller
     {
         private readonly ProjectDBexaContext _context;
+        
 
         public ProjectsController(ProjectDBexaContext context)
         {
             _context = context;
+            
         }
-
+        //public ActionResult IndexViewData()
+        //{
+        //    ViewData["ProjTaskList"] = GetTasks();
+        //    ViewData["ResourceList"] = GetResources();
+        //    return View();
+        //}
+        internal List<Resource> GetResources()
+        {
+            List<Resource> reslist = _context.Resources.ToList();
+            return reslist;
+        }
+        internal List<Project> GetProjects()
+        {
+            List<Project> projlist = _context.Projects.ToList();
+            return projlist;
+        }
+        internal List<ProjectTask> GetTasks()
+        {
+            List<ProjectTask> taskslist = _context.ProjectTasks.ToList();
+            return taskslist;
+        }
         // GET: Projects
         public async Task<IActionResult> Index()
         {
+            //ViewData["ProjTaskList"] = GetTasks();
+            //ViewData["ResourceList"] = GetResources();
             return View(await _context.Projects.ToListAsync());
         }
-
+        
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(long? id)
         {
@@ -32,9 +56,8 @@ namespace ProjectOne.Controllers
             {
                 return NotFound();
             }
-
-            var project = await _context.Projects
-                .FirstOrDefaultAsync(m => m.Id == id);
+            //List<Resource> allres = _hoco.GetResources();
+            var project = await _context.Projects.Include(p => p.ProjectTasks).ThenInclude(p => p.Resource).FirstOrDefaultAsync(m => m.Id == id);
             if (project == null)
             {
                 return NotFound();

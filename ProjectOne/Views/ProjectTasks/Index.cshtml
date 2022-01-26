@@ -4,15 +4,31 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Tasks</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (Context.Session.GetString("admin") != null && Context.Session.GetString("admin") == "Y")
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
             <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DescriptionSort"]">Description</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StatusSort"]">Status</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["ProjectSort"]">Project</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["ResourceSort"]">Resource</a>
+            </th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
@@ -23,31 +39,59 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Resource)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Project.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Resource.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                @if (item.Resource.Id.ToString() == Context.Session.GetString("id") && Context.Session.GetString("admin") != null && Context.Session.GetString("admin") == "N")
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Resource.Id)
+                    </td>
+                    <td>
+
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+
+                    </td>
+                }
+
+                @if (Context.Session.GetString("admin") != null && Context.Session.GetString("admin") == "Y")
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Resource.Id)
+                    </td>
+
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
     </tbody>
 </table>
