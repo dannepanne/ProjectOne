@@ -42,13 +42,7 @@ namespace ProjectOne.Controllers
                     {
                         return Redirect("~/Projects/Index");
                     }
-                    
-                    return Redirect("~/ProjectTasks/Index");
-                }
-                else
-                {
-                    ViewBag.error = "Invalid Username/Password";
-                    return View("Index");
+                        return Redirect("~/ProjectTasks/Index");
                 }
 
             }
